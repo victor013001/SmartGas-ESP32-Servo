@@ -4,15 +4,18 @@ void setupSerial();
 void setupRGBLED();
 void blueLedOn();
 void setupServo();
+void attachServo();
+void detachServo();
 void connectWiFi();
 void createMQTTClient();
 void clientServoCallback(char *topic, byte *payload, unsigned int length);
-void persistMQTTConnection();
+void publishServoStatus(const char *status);
 void doServoDeactivation();
 void greenLedOn();
 void doServoActivation();
 void redLedOn();
 void reconnectMQTTClient();
+void persistMQTTConnection();
 
 void setup()
 {
@@ -22,7 +25,7 @@ void setup()
   setupServo();
   connectWiFi();
   createMQTTClient();
-  setupServo();
+  greenLedOn();
   Serial.println("SmartGas >> Setup completed");
 }
 
@@ -33,11 +36,12 @@ void loop()
 
 void setupSerial()
 {
-  Serial.println("SmartGas >> Setting up the serial");
   Serial.begin(MONITOR_SPEED);
   while (!Serial)
     ;
   delay(SERIAL_DELAY);
+  Serial.println();
+  Serial.println("SmartGas >> Serial setup");
 }
 
 void setupRGBLED()
@@ -59,8 +63,20 @@ void blueLedOn()
 void setupServo()
 {
   Serial.println("SmartGas >> Setting up the servo motor");
-  servoMotor.attach(PIN_SERVO, 500, 2400);
+  attachServo();
   servoMotor.write(0);
+  delay(INITIAL_SERVO_DELAY);
+  detachServo();
+}
+
+void attachServo()
+{
+  servoMotor.attach(PIN_SERVO);
+}
+
+void detachServo()
+{
+  servoMotor.detach();
 }
 
 void connectWiFi()
@@ -106,6 +122,7 @@ void clientServoCallback(char *topic, byte *payload, unsigned int length)
   }
   else if (response == SERVO_ON_MESSAGE)
   {
+    publishServoStatus(response.c_str());
     Serial.println(response);
     doServoActivation();
   }
@@ -125,12 +142,14 @@ void doServoDeactivation()
   if (currentServoPosition == SERVO_MAX_POSITION)
   {
     Serial.println("SmartGas >> Deactivating the servo motor");
+    attachServo();
     for (int pos = SERVO_MAX_POSITION; pos >= 0; pos -= 1)
     {
       servoMotor.write(pos);
       delay(SERVO_DELAY);
-      greenLedOn();
     }
+    detachServo();
+    greenLedOn();
     currentServoPosition = 0;
   }
 }
@@ -147,12 +166,14 @@ void doServoActivation()
   if (currentServoPosition == 0)
   {
     Serial.println("SmartGas >> Activating the servo motor");
+    attachServo();
     for (int pos = 0; pos <= SERVO_MAX_POSITION; pos += 1)
     {
       servoMotor.write(pos);
       delay(SERVO_DELAY);
-      redLedOn();
     }
+    detachServo();
+    redLedOn();
     currentServoPosition = SERVO_MAX_POSITION;
   }
 }
