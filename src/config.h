@@ -8,7 +8,10 @@
 
 using namespace std;
 
-#define PIN_SERVO 18 // GPIO18
+#define PIN_SERVO 18     // GPIO18
+#define PIN_LED_RED 23   // GPI23
+#define PIN_LED_GREEN 22 // GPI22
+#define PIN_LED_BLUE 21  // GPI21
 #define TIME_TO_ACTIVATE_ALERTS 5
 #define SERVO_DELAY 10
 #define SERVO_MAX_POSITION 160
