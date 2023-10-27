@@ -41,12 +41,19 @@ void setupSerial()
     ;
   delay(SERIAL_DELAY);
   Serial.println();
-  Serial.println("SmartGas >> Serial setup");
+  Serial.print("SmartGas >> Serial setup with speed: ");
+  Serial.println(MONITOR_SPEED);
 }
 
 void setupRGBLED()
 {
-  Serial.println("SmartGas >> Setting up the RGB LED");
+  Serial.print("SmartGas >> Setting up the RGB LED, pins: ");
+  Serial.print("Red: ");
+  Serial.print(PIN_LED_RED);
+  Serial.print(", Green: ");
+  Serial.print(PIN_LED_GREEN);
+  Serial.print(", Blue: ");
+  Serial.println(PIN_LED_BLUE);
   pinMode(PIN_LED_RED, OUTPUT);
   pinMode(PIN_LED_GREEN, OUTPUT);
   pinMode(PIN_LED_BLUE, OUTPUT);
@@ -62,7 +69,8 @@ void blueLedOn()
 
 void setupServo()
 {
-  Serial.println("SmartGas >> Setting up the servo motor");
+  Serial.print("SmartGas >> Setting up the servo motor on pin: ");
+  Serial.println(PIN_SERVO);
   attachServo();
   servoMotor.write(0);
   delay(INITIAL_SERVO_DELAY);
