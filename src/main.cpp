@@ -95,7 +95,8 @@ void connectWiFi()
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
-    delay(500);
+    blueLedOn();
+    delay(WIFI_CONNECTION_DELAY);
   }
   Serial.println();
   Serial.print(ID.c_str());
@@ -197,6 +198,7 @@ void reconnectMQTTClient()
 {
   while (!client.connected())
   {
+    blueLedOn();
     Serial.println("SmartGas >> Attempting MQTT connection...");
     if (client.connect(CLIENT_NAME.c_str()))
     {
@@ -208,7 +210,7 @@ void reconnectMQTTClient()
     {
       Serial.print("Retying in 5 seconds - failed, rc=");
       Serial.println(client.state());
-      delay(5000);
+      delay(RECONNECTION_DELAY);
     }
   }
 }
